@@ -30,13 +30,13 @@ The encryption is performed using AES-GCM.
     let mut o = String::new();
     io::stdin()
         .read_line(&mut o).expect("Failed to read operation");
+    print!("Insert directory path: ");
+    io::stdout().flush().unwrap();
+    let mut d: String = String::new();
+    io::stdin()
+        .read_line(&mut d).expect("Failed to read directory path");
     let operation: i8 = o.to_string().replace("\n", "").parse().unwrap();
-        print!("Insert directory path: ");
-        io::stdout().flush().unwrap();
-        let mut d: String = String::new();
-        io::stdin()
-            .read_line(&mut d).expect("Failed to read directory path");
-        let dir_input = d.replace("\n", "");
+    let dir_input = d.replace("\n", "");
     (operation, dir_input)
 }
 
@@ -88,9 +88,10 @@ fn perform_decryption(secrets_vector: &(String, String), to_decrypt: DirEntry) {
     let encrypted_lines = fs::read_to_string(to_decrypt.path())
         .expect("Failed to read the file to decrypt");
 
+    let (key, nonce) = secrets_vector;
+    
     // Decode the key and the nonce from secrets vector
     let engine = general_purpose::STANDARD_NO_PAD;
-    let (key, nonce) = secrets_vector;
     let k = engine.decode(&key)
         .expect("Failed to decode the key");
     let n = engine.decode(&nonce)
@@ -127,7 +128,8 @@ fn perform_decryption(secrets_vector: &(String, String), to_decrypt: DirEntry) {
 fn collect_files(dir_path: &Path) -> Vec<DirEntry> {
     let mut files = Vec::new();
     if dir_path.is_dir() {
-        for entry in fs::read_dir(dir_path).expect("Failed to read directory") {
+        for entry in fs::read_dir(dir_path)
+            .expect("Failed to read directory") {
             if let Ok(entry) = entry {
                 let path = entry.path();
                 if path.is_dir() {
@@ -163,7 +165,7 @@ fn handle_operation(operation: bool, dir_path: &Path) {
                 secrets.push((key.to_string(), nonce.to_string()));
             }
         }
-        // Check if the number of keys 
+        // Check the number of (key, nonce) pair 
         if secrets.len() < entries.len() {
             println!("Not enough keys and nonces to decrypt all files.");
             return;

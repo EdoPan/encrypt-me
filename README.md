@@ -16,6 +16,11 @@ The script allows to perform two operations:
 > "Insert directory path: ./test"
 
 ## Some context
-The AES GCM encryption is performed using the [aes_gcm](https://docs.rs/aes-gcm/latest/aes_gcm/) crate. The script is able to perform the operations only on ```.txt``` files. Future updates will enable the script to perform the encryption on all types of file.
+### About AES GCM
+The AES GCM encryption is performed using the [aes_gcm](https://docs.rs/aes-gcm/latest/aes_gcm/) crate.
+### Limitations
+* The script is able to perform the operations only on ```.txt``` files. Future updates will enable the script to perform the encryption on all types of file. 
+* For MacOS users the ```.DS_STORE``` file in the target directory and all it's subdirectories cause errors during the operations. To avoid this errors make sure to remove them all.
+* Directories with spaces in their names haven't been handled.
 ## Disclaimer
 The author assumes no responsibility for unrecoverable files or misuse of the code.
