@@ -1,6 +1,7 @@
 use std::io;
 use std::fs;
 use std::path::Path;
+use std::ffi::OsStr;
 use std::fs::OpenOptions;
 use std::fs::{DirEntry, File};
 use std::io::{BufRead, BufReader, Write};
@@ -135,7 +136,10 @@ fn collect_files(dir_path: &Path) -> Vec<DirEntry> {
                 if path.is_dir() {
                     files.extend(collect_files(&path));
                 } else {
-                    files.push(entry);
+                    let check_str = OsStr::new(".DS_Store");
+                    if entry.file_name() != check_str {
+                        files.push(entry);
+                    }
                 }
             }
         }
